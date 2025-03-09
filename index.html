@@ -108,27 +108,40 @@
       // Display products in the table
       function displayProducts(products) {
     const tableBody = document.getElementById('productTableBody');
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Clear previous rows
+
     products.forEach(product => {
         let row = document.createElement('tr');
+        
+        // Correct field order based on the columns in your table
         let fields = [
-            'id', 'name', 'category', 'basis', 'appearance', 'color', 'softeningPoint',
+            'id', 'name', 'category', 'basis', 'appearance', 'color', 
             'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
-            'density', 'solidContent', 'ph', 'applicationTemperature', 'feedingSpeed', 'applicationQuantity', 'openTime'
+            'density', 'softeningPoint', 'applicationTemperature', 'feedingSpeed', 'ph', 'solidContent', 
+            'applicationQuantity', 'openTime'
         ];
+
         fields.forEach(field => {
             let cell = document.createElement('td');
             let value = getNestedValue(product, field) || '';
+
             if (field.startsWith('viscosity.')) {
-                let temp = field.split('.')[1]; // Extract temperature like 30, 120, etc.
-                value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get viscosity value for that temperature
+                let temp = field.split('.')[1]; // Extract the temperature (e.g. 30, 120, etc.)
+                value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get the corresponding viscosity value
             }
-            cell.textContent = value;
+            
+            cell.textContent = value; // Place the value in the table cell
             row.appendChild(cell);
         });
-        tableBody.appendChild(row);
+        
+        tableBody.appendChild(row); // Add the row to the table
     });
 }
+
+function getNestedValue(obj, key) {
+    return key.split('.').reduce((o, k) => (o || {})[k], obj);
+}
+
 
       // Helper to safely access nested properties
       function getNestedValue(obj, path) {
