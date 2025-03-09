@@ -123,7 +123,7 @@
         });
       }
 
-      // Safely access nested object properties
+      // Helper to safely access nested properties
       function getNestedValue(obj, path) {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : ''), obj);
       }
@@ -147,24 +147,28 @@
       function applyFilters() {
         let filteredProducts = productsData;
 
-        // Apply dynamic search filter
+        // Dynamic search: remove commas from numbers within product JSON
         if (dynamicSearchTerm) {
-          filteredProducts = filteredProducts.filter(product =>
-            Object.values(product).some(value =>
-              String(value).toLowerCase().includes(dynamicSearchTerm.toLowerCase())
-            )
-          );
+          filteredProducts = filteredProducts.filter(product => {
+            let productStr = JSON.stringify(product);
+            // Remove commas between digits (e.g., "2,500" becomes "2500")
+            productStr = productStr.replace(/(\d),(\d)/g, '$1$2');
+            return productStr.toLowerCase().includes(dynamicSearchTerm.toLowerCase());
+          });
         }
 
-        // Apply category filter
+        // Category filter
         if (selectedCategory) {
           filteredProducts = filteredProducts.filter(product => product.category === selectedCategory);
         }
 
-        // Apply advanced search filter
+        // Advanced search filter (remove commas before parsing)
         if (advancedFilterActive) {
           filteredProducts = filteredProducts.filter(product => {
-            const viscosityValue = parseFloat(product["viscosity." + advancedTemperature]) || 0;
+            let viscosityStr = getNestedValue(product, "viscosity." + advancedTemperature);
+            // Remove any commas before converting to a number
+            viscosityStr = viscosityStr.replace(/,/g, '');
+            const viscosityValue = parseFloat(viscosityStr) || 0;
             return viscosityValue >= advancedMinViscosity && viscosityValue <= advancedMaxViscosity;
           });
         }
