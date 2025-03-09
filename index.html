@@ -2,16 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Product Filter</title>
+  <title>ADINO Product Database</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <!-- Search Inputs -->
-  <input type="text" id="dynamicFilter" placeholder="Search products...">
+  <input type="text" id="dynamicFilter" placeholder="Filter for any value...">
   <select id="categoryFilter">
     <option value="">All Categories</option>
   </select>
-  <button id="advancedSearchBtn">Advanced Search</button>
+  <button id="advancedSearchBtn">Ranged Viscosity Filter</button>
   
   <!-- Products Table -->
   <table border="1">
@@ -65,6 +65,15 @@
       <label for="viscosityMax">Viscosity Max:</label>
       <input type="number" id="viscosityMax" placeholder="Infinity">
       <br>
+
+      <!-- New Density Range Inputs -->
+      <label for="densityMin">Density Min:</label>
+      <input type="number" id="densityMin" placeholder="0">
+      <br>
+      <label for="densityMax">Density Max:</label>
+      <input type="number" id="densityMax" placeholder="Infinity">
+      <br>
+
       <button id="applyAdvancedSearch">Apply</button>
       <button id="resetAdvancedSearch">Reset</button>
     </div>
@@ -79,6 +88,8 @@
       let advancedTemperature = "120";
       let advancedMinViscosity = 0;
       let advancedMaxViscosity = Infinity;
+      let advancedMinDensity = 0;
+      let advancedMaxDensity = Infinity;
       let selectedCategory = '';
 
       // Fetch product data from JSON
@@ -154,14 +165,18 @@
           filteredProducts = filteredProducts.filter(product => product.category === selectedCategory);
         }
 
-        // Advanced search filter (remove commas before parsing)
+        // Advanced search filter (Viscosity and Density)
         if (advancedFilterActive) {
           filteredProducts = filteredProducts.filter(product => {
             let viscosityStr = getNestedValue(product, "viscosity." + advancedTemperature);
-            // Remove any commas before converting to a number
             viscosityStr = viscosityStr.replace(/,/g, '');
             const viscosityValue = parseFloat(viscosityStr) || 0;
-            return viscosityValue >= advancedMinViscosity && viscosityValue <= advancedMaxViscosity;
+            const densityStr = getNestedValue(product, "density");
+            const densityValue = parseFloat(densityStr.replace(/,/g, '')) || 0;
+
+            // Check if viscosity and density are within the specified ranges
+            return viscosityValue >= advancedMinViscosity && viscosityValue <= advancedMaxViscosity &&
+                   densityValue >= advancedMinDensity && densityValue <= advancedMaxDensity;
           });
         }
 
@@ -206,19 +221,27 @@
         advancedTemperature = document.getElementById("temperatureSelect").value;
         advancedMinViscosity = parseFloat(document.getElementById("viscosityMin").value) || 0;
         advancedMaxViscosity = parseFloat(document.getElementById("viscosityMax").value) || Infinity;
+        advancedMinDensity = parseFloat(document.getElementById("densityMin").value) || 0;
+        advancedMaxDensity = parseFloat(document.getElementById("densityMax").value) || Infinity;
         advancedFilterActive = true;
         advancedSearchModal.style.display = "none";
         applyFilters();
       });
 
-      // Reset advanced search parameters
+      // Reset advanced search filters
       resetAdvancedSearch.addEventListener("click", () => {
-        document.getElementById("temperatureSelect").value = "120";
         document.getElementById("viscosityMin").value = "";
         document.getElementById("viscosityMax").value = "";
+        document.getElementById("densityMin").value = "";
+        document.getElementById("densityMax").value = "";
+        advancedTemperature = "120";
+        advancedMinViscosity = 0;
+        advancedMaxViscosity = Infinity;
+        advancedMinDensity = 0;
+        advancedMaxDensity = Infinity;
         advancedFilterActive = false;
-        advancedSearchModal.style.display = "none";
         applyFilters();
+        advancedSearchModal.style.display = "none";
       });
     });
   </script>
