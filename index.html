@@ -15,16 +15,34 @@
   
   <!-- Products Table -->
   <table border="1">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Category</th>
-        <!-- Add other headers as needed -->
-      </tr>
-    </thead>
-    <tbody id="productTableBody"></tbody>
-  </table>
+        <thead>
+    <tr>
+        <td>${product.id}</td>
+        <td>${product.name}</td>
+        <td>${product.category}</td>
+        <td>${product.basis}</td>
+        <td>${product.appearance}</td>
+        <td>${product.color}</td>
+        <td>${product.softeningPoint}</td>
+        <td>${product.viscosity["30"]}</td>
+        <td>${product.viscosity["120"]}</td>
+        <td>${product.viscosity["140"]}</td>
+        <td>${product.viscosity["160"]}</td>
+        <td>${product.viscosity["180"]}</td>
+        <td>${product.viscosity["200"]}</td>
+        <td>${product.density}</td>
+        <td>${product.solidContent}</td>
+        <td>${product.ph}</td>
+        <td>${product.applicationTemperature}</td>
+        <td>${product.feedingSpeed}</td>
+        <td>${product.applicationQuantity}</td>
+        <td>${product.openTime}</td>
+    </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Data will be inserted dynamically -->
+        </tbody>
+    </table>
 
   <!-- Advanced Search Modal -->
   <div id="advancedSearchModal">
