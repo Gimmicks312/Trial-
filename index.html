@@ -15,8 +15,8 @@
   
   <!-- Products Table -->
   <table border="1">
-        <thead>
-    <tr>
+    <thead>
+      <tr>
         <td>ID</td>
         <td>Name</td>
         <td>Category</td>
@@ -37,12 +37,12 @@
         <td>pH-Value</td>
         <td>Application Quantity</td>
         <td>Open Time</td>
-    </tr>
-        </thead>
-        <tbody id="productTableBody">
-            <!-- Data will be inserted dynamically -->
-        </tbody>
-    </table>
+      </tr>
+    </thead>
+    <tbody id="productTableBody">
+      <!-- Data will be inserted dynamically -->
+    </tbody>
+  </table>
 
   <!-- Advanced Search Modal -->
   <div id="advancedSearchModal">
@@ -51,12 +51,12 @@
       <h3>Advanced Search</h3>
       <label for="temperatureSelect">Temperature:</label>
       <select id="temperatureSelect">
-         <option value="30">30</option>
-         <option value="120" selected>120</option>
-         <option value="140">140</option>
-         <option value="160">160</option>
-         <option value="180">180</option>
-         <option value="200">200</option>
+        <option value="30">30</option>
+        <option value="120" selected>120</option>
+        <option value="140">140</option>
+        <option value="160">160</option>
+        <option value="180">180</option>
+        <option value="200">200</option>
       </select>
       <br>
       <label for="viscosityMin">Viscosity Min:</label>
@@ -107,83 +107,43 @@
 
       // Display products in the table
       function displayProducts(products) {
-    const tableBody = document.getElementById('productTableBody');
-    tableBody.innerHTML = ''; // Clear previous rows
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = ''; // Clear previous rows
 
-    products.forEach(product => {
-        let row = document.createElement('tr');
-        
-        // Correct field order based on the columns in your table
-        let fields = [
-            'id', 'name', 'category', 'basis', 'appearance', 'color', 
-            'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
-            'density', 'softeningPoint', 'applicationTemperature', 'feedingSpeed', 'ph', 'solidContent', 
-            'applicationQuantity', 'openTime'
-        ];
+        products.forEach(product => {
+          let row = document.createElement('tr');
+          
+          // Correct field order based on the columns in your table
+          let fields = [
+              'id', 'name', 'category', 'basis', 'appearance', 'color', 
+              'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
+              'density', 'softeningPoint', 'applicationTemperature', 'feedingSpeed', 'ph', 'solidContent', 
+              'applicationQuantity', 'openTime'
+          ];
 
-        fields.forEach(field => {
+          fields.forEach(field => {
             let cell = document.createElement('td');
             let value = getNestedValue(product, field) || '';
 
             if (field.startsWith('viscosity.')) {
-                let temp = field.split('.')[1]; // Extract the temperature (e.g. 30, 120, etc.)
-                value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get the corresponding viscosity value
-            }
-            
-            cell.textContent = value; // Place the value in the table cell
-            row.appendChild(cell);
-        });
-        function displayProducts(products) {
-    const tableBody = document.getElementById('productTableBody');
-    tableBody.innerHTML = ''; // Clear previous rows
-
-    products.forEach(product => {
-        let row = document.createElement('tr');
-        
-        // Correct field order based on the columns in your table
-        let fields = [
-            'id', 'name', 'category', 'basis', 'appearance', 'color', 
-            'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
-            'density', 'softeningPoint', 'applicationTemperature', 'feedingSpeed', 'ph', 'solidContent', 
-            'applicationQuantity', 'openTime'
-        ];
-
-        fields.forEach(field => {
-            let cell = document.createElement('td');
-            let value = getNestedValue(product, field) || '';
-
-            if (field.startsWith('viscosity.')) {
-                let temp = field.split('.')[1]; // Extract the temperature (e.g. 30, 120, etc.)
-                value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get the corresponding viscosity value
+              let temp = field.split('.')[1]; // Extract the temperature (e.g. 30, 120, etc.)
+              value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get the corresponding viscosity value
             }
             
             // Swap values for solidContent and ph
             if (field === 'solidContent') {
-                value = getNestedValue(product, 'ph') || '';
+              value = getNestedValue(product, 'ph') || '';
             } else if (field === 'ph') {
-                value = getNestedValue(product, 'solidContent') || '';
+              value = getNestedValue(product, 'solidContent') || '';
             }
             
             cell.textContent = value; // Place the value in the table cell
             row.appendChild(cell);
+          });
+
+          tableBody.appendChild(row); // Add the row to the table
         });
-        
-        tableBody.appendChild(row); // Add the row to the table
-    });
-}
-
-function getNestedValue(obj, key) {
-    return key.split('.').reduce((o, k) => (o || {})[k], obj);
-}
-
-        tableBody.appendChild(row); // Add the row to the table
-    });
-}
-
-function getNestedValue(obj, key) {
-    return key.split('.').reduce((o, k) => (o || {})[k], obj);
-}
-
+      }
 
       // Helper to safely access nested properties
       function getNestedValue(obj, path) {
@@ -209,7 +169,7 @@ function getNestedValue(obj, key) {
       function applyFilters() {
         let filteredProducts = productsData;
 
-        // Dynamic search: remove commas from numbers within product JSON
+        // Dynamic search
         if (dynamicSearchTerm) {
           filteredProducts = filteredProducts.filter(product => {
             let productStr = JSON.stringify(product);
@@ -305,4 +265,4 @@ function getNestedValue(obj, key) {
     });
   </script>
 </body>
-</html>
+</html
