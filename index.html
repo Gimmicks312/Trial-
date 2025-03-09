@@ -7,26 +7,35 @@
   <style>
     /* Add arrow styling */
     th.collapsible {
-      cursor: pointer;
-      position: relative;
-      padding-right: 20px;
-    }
+  position: relative;
+  text-align: center;
+  white-space: nowrap; /* Prevent text from wrapping */
+  width: auto; /* Let the column width auto-adjust */
+}
 
-    th.collapsible:after {
-      content: '▼';
-      position: absolute;
-      right: 5px;
-      font-size: 12px;
-    }
+th.collapsed {
+  width: 0.5cm; /* Set the width of the collapsed column to 0.5cm */
+  padding-right: 0; /* Optional: Remove padding to ensure the width is minimized */
+  overflow: hidden; /* Hide the content */
+}
 
-    th.collapsed:after {
-      content: '▲';
-    }
+th.collapsible:after {
+  content: '▼'; /* Show downwards arrow when expanded */
+  position: absolute;
+  right: 5px;
+  font-size: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-    td.collapsed-cell {
-      width: 0.5cm; /* Set the width of the column cells to 0.5cm when collapsed */
+th.collapsed:after {
+  content: '▲'; /* Show upwards arrow when collapsed */
+}
+
+td.collapsed-cell {
+  width: 0.5cm; /* Set the width of the column cells to 0.5cm when collapsed */
   overflow: hidden; /* Hide the content of the column when collapsed */
-    }
+}
   </style>
 </head>
 <body>
