@@ -6,17 +6,19 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     /* Add arrow styling */
-    th.collapsible {
+/* Add arrow styling */
+th.collapsible {
   position: relative;
   text-align: center;
   white-space: nowrap; /* Prevent text from wrapping */
   width: auto; /* Let the column width auto-adjust */
+  cursor: pointer; /* Indicate that the header is clickable */
 }
 
 th.collapsed {
   width: 0.5cm; /* Set the width of the collapsed column to 0.5cm */
-  padding-right: 0; /* Optional: Remove padding to ensure the width is minimized */
-  overflow: hidden; /* Hide the content */
+  padding-right: 0; /* Remove padding for minimal width */
+  overflow: hidden; /* Hide the content in the header */
 }
 
 th.collapsible:after {
@@ -34,7 +36,9 @@ th.collapsed:after {
 
 td.collapsed-cell {
   width: 0.5cm; /* Set the width of the column cells to 0.5cm when collapsed */
-  overflow: hidden; /* Hide the content of the column when collapsed */
+  overflow: hidden; /* Hide the content of the column cells */
+  text-align: center; /* Center-align the content */
+  visibility: hidden; /* Hide the content completely when collapsed */
 }
   </style>
 </head>
