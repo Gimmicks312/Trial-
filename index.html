@@ -5,18 +5,26 @@
   <title>ADINO Product Database</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .arrow {
+    /* Add arrow styling */
+    th.collapsible {
       cursor: pointer;
-      padding-left: 5px;
+      position: relative;
+      padding-right: 20px;
     }
-    .collapsed {
+
+    th.collapsible:after {
+      content: '▼';
+      position: absolute;
+      right: 5px;
+      font-size: 12px;
+    }
+
+    th.collapsed:after {
+      content: '▲';
+    }
+
+    td.collapsed-cell {
       display: none;
-    }
-    .arrow.collapsed::before {
-      content: "↑";
-    }
-    .arrow::before {
-      content: "↓";
     }
   </style>
 </head>
@@ -32,26 +40,26 @@
   <table border="1">
     <thead>
       <tr>
-        <td>ID <span class="arrow" data-column="id"></span></td>
-        <td>Name <span class="arrow" data-column="name"></span></td>
-        <td>Category <span class="arrow" data-column="category"></span></td>
-        <td>Basis <span class="arrow" data-column="basis"></span></td>
-        <td>Appearance <span class="arrow" data-column="appearance"></span></td>
-        <td>Color <span class="arrow" data-column="color"></span></td>
-        <td>Viscosity 30°C <span class="arrow" data-column="viscosity.30"></span></td>
-        <td>Viscosity 120°C <span class="arrow" data-column="viscosity.120"></span></td>
-        <td>Viscosity 140°C <span class="arrow" data-column="viscosity.140"></span></td>
-        <td>Viscosity 160°C <span class="arrow" data-column="viscosity.160"></span></td>
-        <td>Viscosity 180°C <span class="arrow" data-column="viscosity.180"></span></td>
-        <td>Viscosity 200°C <span class="arrow" data-column="viscosity.200"></span></td>
-        <td>Density <span class="arrow" data-column="density"></span></td>
-        <td>Softening Point <span class="arrow" data-column="softeningPoint"></span></td>
-        <td>Application Temperature <span class="arrow" data-column="applicationTemperature"></span></td>
-        <td>Feeding Speed <span class="arrow" data-column="feedingSpeed"></span></td>
-        <td>Solid Content <span class="arrow" data-column="solidContent"></span></td>
-        <td>pH-Value <span class="arrow" data-column="ph"></span></td>
-        <td>Application Quantity <span class="arrow" data-column="applicationQuantity"></span></td>
-        <td>Open Time <span class="arrow" data-column="openTime"></span></td>
+        <th class="collapsible">ID</th>
+        <th class="collapsible">Name</th>
+        <th class="collapsible">Category</th>
+        <th class="collapsible">Basis</th>
+        <th class="collapsible">Appearance</th>
+        <th class="collapsible">Color</th>
+        <th class="collapsible">Viscosity 30°C</th>
+        <th class="collapsible">Viscosity 120°C</th>
+        <th class="collapsible">Viscosity 140°C</th>
+        <th class="collapsible">Viscosity 160°C</th>
+        <th class="collapsible">Viscosity 180°C</th>
+        <th class="collapsible">Viscosity 200°C</th>
+        <th class="collapsible">Density</th>
+        <th class="collapsible">Softening Point</th>
+        <th class="collapsible">Application Temperature</th>
+        <th class="collapsible">Feeding Speed</th>
+        <th class="collapsible">Solid Content</th>
+        <th class="collapsible">pH-Value</th>
+        <th class="collapsible">Application Quantity</th>
+        <th class="collapsible">Open Time</th>
       </tr>
     </thead>
     <tbody id="productTableBody">
@@ -96,6 +104,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // Global state for product data and filters
       let productsData = [];
       let dynamicSearchTerm = '';
       let advancedFilterActive = false;
@@ -105,11 +114,13 @@
       let advancedMinDensity = 0;
       let advancedMaxDensity = Infinity;
       let selectedCategory = '';
-      let columnStates = {};
 
       // Fetch product data from JSON
       fetch('https://raw.githubusercontent.com/Gimmicks312/Adhesive-products/main/products.json')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
         .then(data => {
           productsData = data;
           displayProducts(productsData);
@@ -125,6 +136,7 @@
         products.forEach(product => {
           let row = document.createElement('tr');
           
+          // Correct field order based on the columns in your table
           let fields = [
               'id', 'name', 'category', 'basis', 'appearance', 'color', 
               'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
@@ -135,11 +147,24 @@
           fields.forEach(field => {
             let cell = document.createElement('td');
             let value = getNestedValue(product, field) || '';
-            cell.textContent = value;
+
+            if (field.startsWith('viscosity.')) {
+              let temp = field.split('.')[1]; // Extract the temperature (e.g. 30, 120, etc.)
+              value = getNestedValue(product, 'viscosity.' + temp) || ''; // Get the corresponding viscosity value
+            }
+            
+            // Swap values for solidContent and ph
+            if (field === 'solidContent') {
+              value = getNestedValue(product, 'ph') || '';
+            } else if (field === 'ph') {
+              value = getNestedValue(product, 'solidContent') || '';
+            }
+            
+            cell.textContent = value; // Place the value in the table cell
             row.appendChild(cell);
           });
 
-          tableBody.appendChild(row);
+          tableBody.appendChild(row); // Add the row to the table
         });
       }
 
@@ -163,46 +188,16 @@
         });
       }
 
-      // Function to toggle column visibility
-      function toggleColumn(column) {
-        const table = document.querySelector("table");
-        const header = table.querySelector(`td[data-column='${column}']`);
-        const columnCells = table.querySelectorAll(`td:nth-child(${header.cellIndex + 1})`);
-        
-        // Toggle the collapsed state
-        if (columnStates[column]) {
-          columnStates[column] = false;
-          header.querySelector(".arrow").classList.remove("collapsed");
-          columnCells.forEach(cell => {
-            cell.classList.remove("collapsed");
-            cell.textContent = getNestedValue(cell.closest('tr').dataset, column) || ''; // Empty the cell when collapsed
-          });
-        } else {
-          columnStates[column] = true;
-          header.querySelector(".arrow").classList.add("collapsed");
-          columnCells.forEach(cell => {
-            cell.classList.add("collapsed");
-            cell.textContent = getNestedValue(cell.closest('tr').dataset, column); // Restore cell content
-          });
-        }
-      }
-
-      // Add event listeners for arrows
-      document.querySelectorAll('.arrow').forEach(arrow => {
-        arrow.addEventListener('click', () => {
-          const column = arrow.getAttribute('data-column');
-          toggleColumn(column);
-        });
-      });
-
-      // Apply filters based on dynamic search, category, and advanced search
+      // Unified filter function combining dynamic, category, and advanced filters
       function applyFilters() {
         let filteredProducts = productsData;
 
-        // Filter for dynamic search term
+        // Dynamic search
         if (dynamicSearchTerm) {
           filteredProducts = filteredProducts.filter(product => {
-            return JSON.stringify(product).toLowerCase().includes(dynamicSearchTerm.toLowerCase());
+            let productStr = JSON.stringify(product);
+            productStr = productStr.replace(/(\d),(\d)/g, '$1$2');
+            return productStr.toLowerCase().includes(dynamicSearchTerm.toLowerCase());
           });
         }
 
@@ -211,11 +206,15 @@
           filteredProducts = filteredProducts.filter(product => product.category === selectedCategory);
         }
 
-        // Advanced search
+        // Advanced search filter (Viscosity and Density)
         if (advancedFilterActive) {
           filteredProducts = filteredProducts.filter(product => {
-            let viscosityValue = getNestedValue(product, `viscosity.${advancedTemperature}`);
-            let densityValue = getNestedValue(product, "density");
+            let viscosityStr = getNestedValue(product, "viscosity." + advancedTemperature);
+            viscosityStr = viscosityStr.replace(/,/g, '');
+            const viscosityValue = parseFloat(viscosityStr) || 0;
+            const densityStr = getNestedValue(product, "density");
+            const densityValue = parseFloat(densityStr.replace(/,/g, '')) || 0;
+
             return viscosityValue >= advancedMinViscosity && viscosityValue <= advancedMaxViscosity &&
                    densityValue >= advancedMinDensity && densityValue <= advancedMaxDensity;
           });
@@ -223,7 +222,7 @@
 
         displayProducts(filteredProducts);
       }
-      
+
       // Event listener for dynamic search input
       document.getElementById('dynamicFilter').addEventListener('input', function() {
         dynamicSearchTerm = this.value;
@@ -234,6 +233,69 @@
       document.getElementById('categoryFilter').addEventListener('change', function() {
         selectedCategory = this.value;
         applyFilters();
+      });
+
+      // Advanced Search Modal Handling
+      const advancedSearchBtn = document.getElementById("advancedSearchBtn");
+      const advancedSearchModal = document.getElementById("advancedSearchModal");
+      const closeBtn = document.querySelector(".close-btn");
+      const applyAdvancedSearch = document.getElementById("applyAdvancedSearch");
+      const resetAdvancedSearch = document.getElementById("resetAdvancedSearch");
+
+      advancedSearchBtn.addEventListener("click", () => {
+        advancedSearchModal.style.display = "block";
+      });
+
+      closeBtn.addEventListener("click", () => {
+        advancedSearchModal.style.display = "none";
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target === advancedSearchModal) {
+          advancedSearchModal.style.display = "none";
+        }
+      });
+
+      // Apply advanced search filters and update state
+      applyAdvancedSearch.addEventListener("click", () => {
+        advancedTemperature = document.getElementById("temperatureSelect").value;
+        advancedMinViscosity = parseFloat(document.getElementById("viscosityMin").value) || 0;
+        advancedMaxViscosity = parseFloat(document.getElementById("viscosityMax").value) || Infinity;
+        advancedMinDensity = parseFloat(document.getElementById("densityMin").value) || 0;
+        advancedMaxDensity = parseFloat(document.getElementById("densityMax").value) || Infinity;
+        advancedFilterActive = true;
+        advancedSearchModal.style.display = "none";
+        applyFilters();
+      });
+
+      // Reset advanced search filters
+      resetAdvancedSearch.addEventListener("click", () => {
+        document.getElementById("viscosityMin").value = "";
+        document.getElementById("viscosityMax").value = "";
+        document.getElementById("densityMin").value = "";
+        document.getElementById("densityMax").value = "";
+        advancedTemperature = "120";
+        advancedMinViscosity = 0;
+        advancedMaxViscosity = Infinity;
+        advancedMinDensity = 0;
+        advancedMaxDensity = Infinity;
+        advancedFilterActive = false;
+        applyFilters();
+        advancedSearchModal.style.display = "none";
+      });
+
+      // Add collapsible column functionality
+      document.querySelectorAll("th.collapsible").forEach(header => {
+        header.addEventListener("click", () => {
+          const index = Array.from(header.parentNode.children).indexOf(header);
+          const rows = document.querySelectorAll("tbody tr");
+          
+          header.classList.toggle('collapsed');
+          rows.forEach(row => {
+            const cell = row.cells[index];
+            cell.classList.toggle('collapsed-cell');
+          });
+        });
       });
     });
   </script>
