@@ -105,40 +105,27 @@
         })
         .catch(error => console.error('Error fetching data:', error));
 
-// Display products in the table
-function displayProducts(products) {
-  const tableBody = document.getElementById('productTableBody');
-  tableBody.innerHTML = '';
-  
-  products.forEach(product => {
-    let row = document.createElement('tr');
-    
-    let fields = [
-      'ID', 'Name', 'Category', 'Basis', 'Appearance', 'Color', 'Softening Point', 
-      'Viscosity.30', 'Viscosity.120', 'Viscosity.140', 'Viscosity.160', 'Viscosity.180', 'Viscosity.200', 
-      'Density', 'Solid Content', 'pH-Value', 'Application Temperature', 'Feeding Speed', 'Application Quantity', 'Open Time'
-    ];
-    
-    fields.forEach(field => {
-      let cell = document.createElement('td');
-      let value = getNestedValue(product, field) || '';
-      cell.textContent = value;
-      row.appendChild(cell);
-    });
-    
-    tableBody.appendChild(row);
-  });
-}
+      // Display products in the table
+      function displayProducts(products) {
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = '';
+        products.forEach(product => {
+          let row = document.createElement('tr');
+          let fields = [
+            'id', 'name', 'category', 'basis', 'appearance', 'color', 'softeningPoint', 
+            'viscosity.30', 'viscosity.120', 'viscosity.140', 'viscosity.160', 'viscosity.180', 'viscosity.200', 
+            'density', 'solidContent', 'ph', 'applicationTemperature', 'feedingSpeed', 'applicationQuantity', 'openTime'
+          ];
+          fields.forEach(field => {
+            let cell = document.createElement('td');
+            let value = getNestedValue(product, field) || '';
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+          tableBody.appendChild(row);
+        });
+      }
 
-// Function to get nested values
-function getNestedValue(obj, field) {
-  const keys = field.split('.');
-  let value = obj;
-  for (let key of keys) {
-    value = value ? value[key] : '';
-  }
-  return value;
-}
       // Helper to safely access nested properties
       function getNestedValue(obj, path) {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : ''), obj);
@@ -181,7 +168,7 @@ function getNestedValue(obj, field) {
         // Advanced search filter (Viscosity and Density)
         if (advancedFilterActive) {
           filteredProducts = filteredProducts.filter(product => {
-            let viscosityStr = getNestedValue(product, "Viscosity." + advancedTemperature);
+            let viscosityStr = getNestedValue(product, "viscosity." + advancedTemperature);
             viscosityStr = viscosityStr.replace(/,/g, '');
             const viscosityValue = parseFloat(viscosityStr) || 0;
             const densityStr = getNestedValue(product, "density");
