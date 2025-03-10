@@ -1,169 +1,133 @@
-/* Global Styles */
-body {
-  margin: 0;
-  padding: 20px;
-  background-color: #ffffff; /* Main white background */
-  font-family: Arial, sans-serif;
-  color: #333; /* Dark grey text */
-}
-
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  color: #000; /* Black headings */
-}
-
-/* Form Elements */
-input[type="text"],
-input[type="number"],
-select {
-  padding: 10px;
-  margin: 5px;
-  width: 200px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-input:focus, select:focus {
-  border-color: #FFA500; /* Orange accent on focus */
-  outline: none;
-}
-
-/* Buttons */
-button {
-  padding: 10px 15px;
-  margin: 5px;
-  font-size: 14px;
-  background-color: #FFA500; /* Orange */
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #e59400; /* Darker orange on hover */
-}
-
-button:focus {
-  outline: none;
-}
-
-/* Table Styling */
+/* General Table Styles */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-thead {
-  background-color: #f2f2f2;
-}
-
 th, td {
-  border: 1px solid #ddd;
-  padding: 8px 12px; /* Reduced padding to minimize space between headers */
+  padding: 8px 12px;
   text-align: left;
-  word-wrap: break-word; /* Enable text wrapping for long words */
-  max-width: 150px; /* Restrict max width for better wrapping control */
+  border: 1px solid #ddd;
 }
 
-th {
-  background-color: #FFA500; /* Orange header */
-  color: #fff;
-}
-
-/* Styling for collapsible columns */
+/* Collapsible Header Arrow */
 th.collapsible {
   cursor: pointer;
   position: relative;
   padding-right: 20px;
-  transition: width 0.3s ease;
+  background-color: #FFA500; /* Default header color */
 }
 
 th.collapsible:after {
-  content: '▼';
+  content: '▼'; /* Down arrow by default */
   position: absolute;
   right: 5px;
   font-size: 12px;
 }
 
 th.collapsed:after {
-  content: '▲';
+  content: '▲'; /* Up arrow when collapsed */
 }
 
-/* Shrink the column width and hide cell content when collapsed */
+th.collapsed {
+  background-color: #f2f2f2; /* Light gray when collapsed */
+}
+
+/* Collapsing Column Cells */
 td.collapsed-cell {
-  width: 20px; /* Shrink to small size */
-  visibility: hidden; /* Hide content but keep the space */
-  text-align: center;
+  display: none; /* Hide content when column is collapsed */
 }
 
-/* If you want to hide the content completely and remove space */
-td.collapsed-cell.hidden {
-  display: none;
-}
-
-/* Adjust th and td width and visibility during collapse */
-th.collapsed, td.collapsed-cell {
-  width: 20px;
-  visibility: hidden;
-}
-
-/* Optional: Transition effect for column hiding */
-td, th {
-  transition: width 0.3s ease, visibility 0.3s ease;
-}
-
-/* Modal Styles */
+/* Advanced Search Modal */
 #advancedSearchModal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 1;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black overlay */
+  background-color: rgba(0, 0, 0, 0.4); /* Dark background behind modal */
+  overflow: auto;
 }
 
 .modal-content {
   background-color: #fff;
-  margin: 10% auto;
   padding: 20px;
-  border-radius: 5px;
-  width: 350px; /* Adjusted width for more content */
-  position: relative;
+  margin: 10% auto;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
 }
 
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  color: #333;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
   cursor: pointer;
 }
 
-/* Adjusted form input fields in the modal for consistency */
-.modal-content input[type="number"],
-.modal-content select {
-  width: 100%; /* Make inputs and selects fill available width */
+h3 {
+  margin-bottom: 20px;
 }
 
-/* Layout Container */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+label {
+  display: block;
+  margin-bottom: 8px;
 }
 
-/* Additional Space for Inputs in the Modal */
-.modal-content label {
-  font-weight: bold;
+input, select {
+  padding: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #FFA500;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ff8c00; /* Slightly darker when hovered */
+}
+
+/* Category and Filter Buttons */
+input[type="text"], select {
+  padding: 8px;
+  margin: 5px 0;
+}
+
+#categoryFilter {
+  width: 200px;
+}
+
+#advancedSearchBtn {
   margin-top: 10px;
+  background-color: #4CAF50;
+  color: white;
 }
 
-/* Styling for range filter inputs (density) */
-#densityMin,
-#densityMax {
-  width: 100%; /* Full width for density range inputs */
+#advancedSearchBtn:hover {
+  background-color: #45a049;
+}
+
+#dynamicFilter {
+  width: 250px;
+  margin-bottom: 10px;
+}
+
+#categoryFilter {
+  width: 200px;
 }
