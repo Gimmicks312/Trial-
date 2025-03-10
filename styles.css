@@ -39,6 +39,17 @@ td.collapsed-cell {
   display: none; /* Hide content when column is collapsed */
 }
 
+/* Table Adjustments when Column Collapses */
+th.collapsed, td.collapsed-cell {
+  width: 1px; /* Collapsed column width adjustment */
+  visibility: hidden; /* Hides the content but doesn't collapse the column completely */
+}
+
+td.collapsed-cell {
+  visibility: hidden; /* Ensures no content is displayed */
+  width: 0; /* Prevent the collapsed column from taking space */
+}
+
 /* Advanced Search Modal */
 #advancedSearchModal {
   display: none;
