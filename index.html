@@ -10,6 +10,7 @@
       cursor: pointer;
       position: relative;
       padding-right: 20px;
+      transition: width 0.3s ease;
     }
 
     th.collapsible:after {
@@ -23,8 +24,17 @@
       content: '▲';
     }
 
+    /* Styling for the shrinking effect */
+    th.collapsed,
     td.collapsed-cell {
-      display: none;
+      width: 0;
+      padding: 0;
+      text-align: center;
+      visibility: hidden;
+    }
+
+    td {
+      transition: width 0.3s ease;
     }
   </style>
 </head>
@@ -284,16 +294,17 @@
         advancedSearchModal.style.display = "none";
       });
 
-      // Add collapsible column functionality
+      // Shrink column functionality
       document.querySelectorAll("th.collapsible").forEach(header => {
         header.addEventListener("click", () => {
           const index = Array.from(header.parentNode.children).indexOf(header);
           const rows = document.querySelectorAll("tbody tr");
-          
-          header.classList.toggle('collapsed');
+
+          header.classList.toggle('collapsed');  // Toggle the arrow direction
+
           rows.forEach(row => {
             const cell = row.cells[index];
-            cell.classList.toggle('collapsed-cell');
+            cell.classList.toggle('collapsed-cell');  // Shrink cell content and hide it
           });
         });
       });
