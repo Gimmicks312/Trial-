@@ -10,7 +10,6 @@
       cursor: pointer;
       position: relative;
       padding-right: 20px;
-      transition: width 0.3s ease;
     }
 
     th.collapsible:after {
@@ -24,15 +23,8 @@
       content: '▲';
     }
 
-    /* Shrink the content and hide it when collapsed */
     td.collapsed-cell {
-      width: 20px; /* Shrink cell width to match the arrow size */
-      overflow: hidden;
-      text-align: center;
-    }
-
-    td {
-      transition: width 0.3s ease, opacity 0.3s ease;
+      display: none;
     }
   </style>
 </head>
@@ -279,7 +271,6 @@
 
       // Reset advanced search filters
       resetAdvancedSearch.addEventListener("click", () => {
-        document.getElementById("temperatureSelect").value = "120";
         document.getElementById("viscosityMin").value = "";
         document.getElementById("viscosityMax").value = "";
         document.getElementById("densityMin").value = "";
@@ -289,31 +280,30 @@
         advancedMaxViscosity = Infinity;
         advancedMinDensity = 0;
         advancedMaxDensity = Infinity;
+
         advancedFilterActive = false;
         applyFilters();
         advancedSearchModal.style.display = "none";
       });
+      
+      // Column Collapse functionality
+      document.querySelectorAll("th.collapsible").forEach(th => {
+        th.addEventListener("click", function() {
+          const index = Array.from(th.parentNode.children).indexOf(th);
+          const rows = document.querySelectorAll("tr");
+          const isCollapsed = th.classList.contains("collapsed");
 
-      // Add collapsible column functionality
-      document.querySelectorAll("th.collapsible").forEach(header => {
-        header.addEventListener("click", () => {
-          const index = Array.from(header.parentNode.children).indexOf(header);
-          const rows = document.querySelectorAll("tbody tr");
-
-          // Toggle the collapsed state on the header
-          header.classList.toggle('collapsed');
-
-          // Shrink or expand the column
-          rows.forEach(row => {
-            const cell = row.cells[index];
-            if (header.classList.contains('collapsed')) {
-              // Shrink the column by hiding content
-              cell.classList.add('collapsed-cell');
-            } else {
-              // Restore the column to its original state
-              cell.classList.remove('collapsed-cell');
-            }
-          });
+          if (isCollapsed) {
+            th.classList.remove("collapsed");
+            rows.forEach(row => {
+              row.cells[index].classList.remove("collapsed-cell");
+            });
+          } else {
+            th.classList.add("collapsed");
+            rows.forEach(row => {
+              row.cells[index].classList.add("collapsed-cell");
+            });
+          }
         });
       });
     });
