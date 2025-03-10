@@ -72,6 +72,48 @@ th {
   color: #fff;
 }
 
+/* Styling for collapsible columns */
+th.collapsible {
+  cursor: pointer;
+  position: relative;
+  padding-right: 20px;
+  transition: width 0.3s ease;
+}
+
+th.collapsible:after {
+  content: '▼';
+  position: absolute;
+  right: 5px;
+  font-size: 12px;
+}
+
+th.collapsed:after {
+  content: '▲';
+}
+
+/* Shrink the column width and hide cell content when collapsed */
+td.collapsed-cell {
+  width: 20px; /* Shrink to small size */
+  visibility: hidden; /* Hide content but keep the space */
+  text-align: center;
+}
+
+/* If you want to hide the content completely and remove space */
+td.collapsed-cell.hidden {
+  display: none;
+}
+
+/* Adjust th and td width and visibility during collapse */
+th.collapsed, td.collapsed-cell {
+  width: 20px;
+  visibility: hidden;
+}
+
+/* Optional: Transition effect for column hiding */
+td, th {
+  transition: width 0.3s ease, visibility 0.3s ease;
+}
+
 /* Modal Styles */
 #advancedSearchModal {
   display: none;
@@ -107,7 +149,6 @@ th {
 .modal-content select {
   width: 100%; /* Make inputs and selects fill available width */
 }
-}
 
 /* Layout Container */
 .container {
@@ -126,4 +167,3 @@ th {
 #densityMax {
   width: 100%; /* Full width for density range inputs */
 }
-
