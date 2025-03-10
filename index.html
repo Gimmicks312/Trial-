@@ -31,7 +31,6 @@
     th.collapsed {
       background-color: #f2f2f2; /* Background color when collapsed */
     }
-
   </style>
 </head>
 <body>
@@ -248,58 +247,43 @@
       const applyAdvancedSearch = document.getElementById("applyAdvancedSearch");
       const resetAdvancedSearch = document.getElementById("resetAdvancedSearch");
 
-      advancedSearchBtn.addEventListener("click", () => {
-        advancedSearchModal.style.display = "block";
-      });
+      advancedSearchBtn.onclick = () => advancedSearchModal.style.display = "block";
+      closeBtn.onclick = () => advancedSearchModal.style.display = "none";
 
-      closeBtn.addEventListener("click", () => {
-        advancedSearchModal.style.display = "none";
-      });
-
-      applyAdvancedSearch.addEventListener("click", () => {
-        advancedTemperature = document.getElementById("temperatureSelect").value;
-        advancedMinViscosity = parseFloat(document.getElementById("viscosityMin").value) || 0;
-        advancedMaxViscosity = parseFloat(document.getElementById("viscosityMax").value) || Infinity;
-        advancedMinDensity = parseFloat(document.getElementById("densityMin").value) || 0;
-        advancedMaxDensity = parseFloat(document.getElementById("densityMax").value) || Infinity;
-
+      applyAdvancedSearch.onclick = () => {
         advancedFilterActive = true;
+        advancedTemperature = document.getElementById('temperatureSelect').value;
+        advancedMinViscosity = parseFloat(document.getElementById('viscosityMin').value) || 0;
+        advancedMaxViscosity = parseFloat(document.getElementById('viscosityMax').value) || Infinity;
+        advancedMinDensity = parseFloat(document.getElementById('densityMin').value) || 0;
+        advancedMaxDensity = parseFloat(document.getElementById('densityMax').value) || Infinity;
         advancedSearchModal.style.display = "none";
         applyFilters();
-      });
+      };
 
-      resetAdvancedSearch.addEventListener("click", () => {
-        document.getElementById("viscosityMin").value = '';
-        document.getElementById("viscosityMax").value = '';
-        document.getElementById("densityMin").value = '';
-        document.getElementById("densityMax").value = '';
-
+      resetAdvancedSearch.onclick = () => {
+        advancedSearchModal.style.display = "none";
         advancedFilterActive = false;
-        advancedSearchModal.style.display = "none";
         applyFilters();
-      });
+      };
 
-      // Collapsing column functionality
-      document.querySelectorAll("th.collapsible").forEach(header => {
-        header.addEventListener("click", () => {
-          const index = Array.from(header.parentNode.children).indexOf(header);
-          const rows = document.querySelectorAll("tbody tr");
-          
-          // Toggle the collapse class on the header
-          header.classList.toggle('collapsed');
-          
-          // Toggle visibility of cells in the clicked column
-          rows.forEach(row => {
-            const cell = row.cells[index];
-            cell.classList.toggle('collapsed-cell');
+      // Column collapse functionality
+      document.querySelectorAll('th.collapsible').forEach(th => {
+        th.addEventListener('click', function() {
+          const columnIndex = [...th.parentNode.children].indexOf(th);
+          const table = th.closest('table');
+          const rows = table.querySelectorAll('tr');
+
+          rows.forEach((row, rowIndex) => {
+            const cell = row.cells[columnIndex];
+            if (rowIndex === 0) {
+              // Toggle arrow in header row
+              th.classList.toggle('collapsed');
+            } else {
+              // Hide or show cells
+              cell.classList.toggle('collapsed-cell');
+            }
           });
-          
-          // Update the arrow direction
-          if (header.classList.contains('collapsed')) {
-            header.style.backgroundColor = '#f2f2f2'; // Change header color when collapsed
-          } else {
-            header.style.backgroundColor = '#FFA500'; // Default header color when expanded
-          }
         });
       });
     });
