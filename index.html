@@ -10,6 +10,7 @@
       cursor: pointer;
       position: relative;
       padding-right: 20px;
+      background-color: #FFA500; /* Default color */
     }
 
     th.collapsible:after {
@@ -26,6 +27,11 @@
     td.collapsed-cell {
       display: none;
     }
+
+    th.collapsed {
+      background-color: #f2f2f2; /* Background color when collapsed */
+    }
+
   </style>
 </head>
 <body>
@@ -250,13 +256,6 @@
         advancedSearchModal.style.display = "none";
       });
 
-      window.addEventListener("click", (event) => {
-        if (event.target === advancedSearchModal) {
-          advancedSearchModal.style.display = "none";
-        }
-      });
-
-      // Apply advanced search filters and update state
       applyAdvancedSearch.addEventListener("click", () => {
         advancedTemperature = document.getElementById("temperatureSelect").value;
         advancedMinViscosity = parseFloat(document.getElementById("viscosityMin").value) || 0;
@@ -265,44 +264,41 @@
         advancedMaxDensity = parseFloat(document.getElementById("densityMax").value) || Infinity;
 
         advancedFilterActive = true;
-        applyFilters();
         advancedSearchModal.style.display = "none";
+        applyFilters();
       });
 
-      // Reset advanced search filters
       resetAdvancedSearch.addEventListener("click", () => {
-        document.getElementById("viscosityMin").value = "";
-        document.getElementById("viscosityMax").value = "";
-        document.getElementById("densityMin").value = "";
-        document.getElementById("densityMax").value = "";
-
-        advancedMinViscosity = 0;
-        advancedMaxViscosity = Infinity;
-        advancedMinDensity = 0;
-        advancedMaxDensity = Infinity;
+        document.getElementById("viscosityMin").value = '';
+        document.getElementById("viscosityMax").value = '';
+        document.getElementById("densityMin").value = '';
+        document.getElementById("densityMax").value = '';
 
         advancedFilterActive = false;
-        applyFilters();
         advancedSearchModal.style.display = "none";
+        applyFilters();
       });
-      
-      // Column Collapse functionality
-      document.querySelectorAll("th.collapsible").forEach(th => {
-        th.addEventListener("click", function() {
-          const index = Array.from(th.parentNode.children).indexOf(th);
-          const rows = document.querySelectorAll("tr");
-          const isCollapsed = th.classList.contains("collapsed");
 
-          if (isCollapsed) {
-            th.classList.remove("collapsed");
-            rows.forEach(row => {
-              row.cells[index].classList.remove("collapsed-cell");
-            });
+      // Collapsing column functionality
+      document.querySelectorAll("th.collapsible").forEach(header => {
+        header.addEventListener("click", () => {
+          const index = Array.from(header.parentNode.children).indexOf(header);
+          const rows = document.querySelectorAll("tbody tr");
+          
+          // Toggle the collapse class on the header
+          header.classList.toggle('collapsed');
+          
+          // Toggle visibility of cells in the clicked column
+          rows.forEach(row => {
+            const cell = row.cells[index];
+            cell.classList.toggle('collapsed-cell');
+          });
+          
+          // Update the arrow direction
+          if (header.classList.contains('collapsed')) {
+            header.style.backgroundColor = '#f2f2f2'; // Change header color when collapsed
           } else {
-            th.classList.add("collapsed");
-            rows.forEach(row => {
-              row.cells[index].classList.add("collapsed-cell");
-            });
+            header.style.backgroundColor = '#FFA500'; // Default header color when expanded
           }
         });
       });
