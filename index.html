@@ -10,7 +10,7 @@
       cursor: pointer;
       position: relative;
       padding-right: 20px;
-      background-color: #FFA500; /* Default color */
+      transition: width 0.3s ease;
     }
 
     th.collapsible:after {
@@ -24,12 +24,15 @@
       content: '▲';
     }
 
+    /* Shrink the content and hide it when collapsed */
     td.collapsed-cell {
-      display: none;
+      width: 20px; /* Shrink cell width to match the arrow size */
+      overflow: hidden;
+      text-align: center;
     }
 
-    th.collapsed {
-      background-color: #f2f2f2; /* Background color when collapsed */
+    td {
+      transition: width 0.3s ease, opacity 0.3s ease;
     }
   </style>
 </head>
@@ -247,41 +250,68 @@
       const applyAdvancedSearch = document.getElementById("applyAdvancedSearch");
       const resetAdvancedSearch = document.getElementById("resetAdvancedSearch");
 
-      advancedSearchBtn.onclick = () => advancedSearchModal.style.display = "block";
-      closeBtn.onclick = () => advancedSearchModal.style.display = "none";
+      advancedSearchBtn.addEventListener("click", () => {
+        advancedSearchModal.style.display = "block";
+      });
 
-      applyAdvancedSearch.onclick = () => {
+      closeBtn.addEventListener("click", () => {
+        advancedSearchModal.style.display = "none";
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target === advancedSearchModal) {
+          advancedSearchModal.style.display = "none";
+        }
+      });
+
+      // Apply advanced search filters and update state
+      applyAdvancedSearch.addEventListener("click", () => {
+        advancedTemperature = document.getElementById("temperatureSelect").value;
+        advancedMinViscosity = parseFloat(document.getElementById("viscosityMin").value) || 0;
+        advancedMaxViscosity = parseFloat(document.getElementById("viscosityMax").value) || Infinity;
+        advancedMinDensity = parseFloat(document.getElementById("densityMin").value) || 0;
+        advancedMaxDensity = parseFloat(document.getElementById("densityMax").value) || Infinity;
+
         advancedFilterActive = true;
-        advancedTemperature = document.getElementById('temperatureSelect').value;
-        advancedMinViscosity = parseFloat(document.getElementById('viscosityMin').value) || 0;
-        advancedMaxViscosity = parseFloat(document.getElementById('viscosityMax').value) || Infinity;
-        advancedMinDensity = parseFloat(document.getElementById('densityMin').value) || 0;
-        advancedMaxDensity = parseFloat(document.getElementById('densityMax').value) || Infinity;
-        advancedSearchModal.style.display = "none";
         applyFilters();
-      };
-
-      resetAdvancedSearch.onclick = () => {
         advancedSearchModal.style.display = "none";
+      });
+
+      // Reset advanced search filters
+      resetAdvancedSearch.addEventListener("click", () => {
+        document.getElementById("temperatureSelect").value = "120";
+        document.getElementById("viscosityMin").value = "";
+        document.getElementById("viscosityMax").value = "";
+        document.getElementById("densityMin").value = "";
+        document.getElementById("densityMax").value = "";
+
+        advancedMinViscosity = 0;
+        advancedMaxViscosity = Infinity;
+        advancedMinDensity = 0;
+        advancedMaxDensity = Infinity;
         advancedFilterActive = false;
         applyFilters();
-      };
+        advancedSearchModal.style.display = "none";
+      });
 
-      // Column collapse functionality
-      document.querySelectorAll('th.collapsible').forEach(th => {
-        th.addEventListener('click', function() {
-          const columnIndex = [...th.parentNode.children].indexOf(th);
-          const table = th.closest('table');
-          const rows = table.querySelectorAll('tr');
+      // Add collapsible column functionality
+      document.querySelectorAll("th.collapsible").forEach(header => {
+        header.addEventListener("click", () => {
+          const index = Array.from(header.parentNode.children).indexOf(header);
+          const rows = document.querySelectorAll("tbody tr");
 
-          rows.forEach((row, rowIndex) => {
-            const cell = row.cells[columnIndex];
-            if (rowIndex === 0) {
-              // Toggle arrow in header row
-              th.classList.toggle('collapsed');
+          // Toggle the collapsed state on the header
+          header.classList.toggle('collapsed');
+
+          // Shrink or expand the column
+          rows.forEach(row => {
+            const cell = row.cells[index];
+            if (header.classList.contains('collapsed')) {
+              // Shrink the column by hiding content
+              cell.classList.add('collapsed-cell');
             } else {
-              // Hide or show cells
-              cell.classList.toggle('collapsed-cell');
+              // Restore the column to its original state
+              cell.classList.remove('collapsed-cell');
             }
           });
         });
